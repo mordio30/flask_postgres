@@ -4,7 +4,7 @@ from sqlalchemy import text
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mordio30:QWErty@localhost/students'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://mordio30:password@localhost/students'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -21,40 +21,39 @@ class Students(db.Model):  # referencing our table as a Model
 def old_students():
     query = text("SELECT * FROM students WHERE age >= 21")
     result = db.session.execute(query)
-    students = [dict(row) for row in result.mappings()]
-    return jsonify(students)
-
+    json_students = [{'id': row.id, 'first_name': row.first_name, 'last_name': row.last_name, 'age': row.age, 'grade': row.grade} for row in result.mappings()]
+    return jsonify(json_students)
 
 @app.route('/advance_students/', methods=['GET'])
 def advance_students():
     query = text("SELECT * FROM students WHERE age <= 20 AND grade = 'A'")
     result = db.session.execute(query)
-    students = [dict(row) for row in result.mappings()]
-    return jsonify(students)
+    json_students = [{'id': row.id, 'first_name': row.first_name, 'last_name': row.last_name, 'age': row.age, 'grade': row.grade} for row in result.mappings()]
+    return jsonify(json_students)
 
 
 @app.route('/student_names/', methods=['GET'])
 def student_names():
     query = text("SELECT first_name, last_name FROM students")
     result = db.session.execute(query)
-    students = [dict(row) for row in result.mappings()]
-    return jsonify(students)
+    json_students = [{'first_name': row.first_name, 'last_name': row.last_name} for row in result.mappings()]
+    return jsonify(json_students)
 
 
 @app.route('/student_ages/', methods=['GET'])
 def student_ages():
     query = text("SELECT first_name || ' ' || last_name AS student_name, age FROM students")
     result = db.session.execute(query)
-    students = [dict(row) for row in result.mappings()]
-    return jsonify(students)
+    json_students = [{'student_name': row.student_name, 'age': row.age} for row in result.mappings()]
+    return jsonify(json_students)
 
 
 @app.route('/students/', methods=['GET'])
 def all_students():
     query = text("SELECT * FROM students")
     result = db.session.execute(query)
-    students = [dict(row) for row in result.mappings()]
-    return jsonify(students)
+    json_students = [{'id': row.id, 'first_name': row.first_name, 'last_name': row.last_name, 'age': row.age, 'grade': row.grade} for row in result.mappings()]
+    return jsonify(json_students)
 
 
 # if __name__ == '__main__':
